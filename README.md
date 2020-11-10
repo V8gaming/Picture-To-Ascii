@@ -8,4 +8,6 @@ Converts a picture to Ascii
   Convert picture to ascii text with colour and full res.
   
   
+![Before](d.png)
+![After](d_fin.png)
  

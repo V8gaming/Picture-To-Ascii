@@ -6,3 +6,6 @@ Converts a picture to Ascii
   
 ## Stage 2 
   Convert picture to ascii text with colour and full res.
+  
+  
+ 

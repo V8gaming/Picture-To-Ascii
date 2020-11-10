@@ -5,21 +5,22 @@ ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", "."]
 def mainmain():
     path = input("Input valid path name to image:\n")
     try:
-        image = PIL.Image.open(path)
+        image = PIL.Image.open(path) 
     except:
         print(path, "Is not a valid path to picture.")
     return(path)
 path = mainmain()
+
+
 im = Image.open(path)
 width = im.size[0]
-hight = im.size[1]
+height = im.size[1]
 
-#def resize_image(image, new_width=200):
-#    width, height = image.size
-#    ratio = height / width
-#    new_height = int(new_width * ratio)
-#    resize_image = image.resize((new_height, new_width))
-#    return(resize_image)
+im = im.resize((int(width /100 * 165), height), 2)
+im = im.save("Temp.png")
+im = Image.open("Temp.png")
+new_width = im.size[0]
+new_height = im.size[1]
 
 def greyscale(image):
     greyscale_image = image.convert("L")
@@ -30,8 +31,8 @@ def pixels_to_ascii(image):
     characters = "".join([ASCII_CHARS[pixel//25] for pixel in pixels])
     return(characters)
 
-def main(innerwidth = int(width)):
-    image = PIL.Image.open(path)
+def main(innerwidth = int(new_width)):
+    image = PIL.Image.open("Temp.png")
     new_image_data = pixels_to_ascii(greyscale(image))
 
     pixel_count = len(new_image_data)

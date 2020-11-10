@@ -7,7 +7,8 @@ Converts a picture to Ascii
 ## Stage 2 
   Convert picture to ascii text with colour and full res.
   
-  
+## Examples
+
 ![Before](d.png)
 ![After](d_fin.png)
  

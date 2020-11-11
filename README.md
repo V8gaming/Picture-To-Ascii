@@ -1,3 +1,14 @@
 # Picture-To-Ascii
 Converts a picture to Ascii
-File "a.png" and "b.png" are for testing the program and "ascii_image.txt" is the output of the program.
+"ascii_image.txt" is the output of the program, "Temp.png" gets created on first use and gets overriden ones made after.
+## Stage 1 (Done)
+  Convert picture to ascii text in full resulution.
+  
+## Stage 2 
+  Convert picture to ascii text with colour and full res.
+  
+## Examples
+
+![Before](d.png)
+![After](d_fin.png)
+ 

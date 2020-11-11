@@ -1,7 +1,9 @@
 import PIL.Image
 from PIL import Image
+import math
+import os
 
-ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", "."]
+ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
 def mainmain():
     path = input("Input valid path name to image:\n")
     try:
@@ -43,3 +45,5 @@ def main(innerwidth = int(new_width)):
     with open("ascii_image.txt", "w") as f:
         f.write(ascii_image)
 main()
+im.close()
+os.remove("Temp.png") 

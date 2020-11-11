@@ -5,10 +5,10 @@ Converts a picture to Ascii
   Convert picture to ascii text in full resulution.
   
 ## Stage 2 
-  Convert picture to ascii text with colour and full res.
+  Convert picture to ascii text with colour.
   
 ## Examples
-
+The after photo doesn't have colour yet, i think its like an optical illusion.
 ![Before](d.png)
 ![After](d_fin.png)
  

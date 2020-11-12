@@ -2,6 +2,7 @@ import PIL.Image
 from PIL import Image
 import math
 import os
+from stringcolor import *
 
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
 def ainput():
@@ -27,6 +28,7 @@ height = im.size[1]
 im = im.resize((int(float(width /100 * 165) * float(scale)), int(float(height) * float(scale))), 2)
 im = im.save("Temp.png")
 im = Image.open("Temp.png")
+color = list(im.getdata())
 new_width = im.size[0]
 new_height = im.size[1]
 
@@ -45,7 +47,6 @@ def main(innerwidth = int(new_width)):
 
     pixel_count = len(new_image_data)
     ascii_image = "\n".join(new_image_data[i:(i+innerwidth)] for i in range(0, pixel_count, innerwidth))
-
     print(ascii_image)
 
     with open("ascii_image.txt", "w") as f:

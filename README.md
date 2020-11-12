@@ -2,7 +2,7 @@
 Converts a picture to Ascii
 "ascii_image.txt" is the output of the program, "Temp.png" gets created on first use and gets overriden ones made after.
 ## Stage 1 (Done)
-  Convert picture to ascii text in full resulution.
+  Convert picture to ascii text in full resulution, has scale option.
   
 ## Stage 2 
   Convert picture to ascii text with colour.

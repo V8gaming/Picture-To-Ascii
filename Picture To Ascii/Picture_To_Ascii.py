@@ -3,6 +3,7 @@ from PIL import Image
 import math
 import os
 from stringcolor import *
+import pathlib
 
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
 def ainput():
@@ -17,6 +18,20 @@ path = ainput()
 
 scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
 
+suffix = pathlib.Path(path).suffix
+
+#if suffix == ".gif":
+#    im = Image.open(path)
+#    try:
+#        i = 0
+#        frameint = im.n_frames
+#        while i <= frameint:
+#            a = i + 1
+#        frame = list(a)
+#        for frame in frames:
+#            im.save("Frame"+ str(frame)+".png")
+#    except EOFError:
+#        pass
 
 if scale == "":
     scale = 1

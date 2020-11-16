@@ -11,6 +11,7 @@ def ainput():
         image = PIL.Image.open(path) 
     except:
         print(path, "Is not a valid path to picture.")
+        exit()
     return(path)
 path = ainput()
 
@@ -19,7 +20,8 @@ scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for 
 
 if scale == "":
     scale = 1
-
+if int(scale) < 0:
+    scale = 1
 
 im = Image.open(path)
 width = im.size[0]

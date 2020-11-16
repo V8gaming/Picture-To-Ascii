@@ -4,6 +4,7 @@ import math
 import os
 from stringcolor import *
 import pathlib
+import numpy as np
 
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
 def ainput():
@@ -64,10 +65,15 @@ def main(innerwidth = int(new_width)):
 
     pixel_count = len(new_image_data)
     ascii_image = "\n".join(new_image_data[i:(i+innerwidth)] for i in range(0, pixel_count, innerwidth))
+    im = ascii_image
     print(ascii_image)
 
     with open("ascii_image.txt", "w") as f:
         f.write(ascii_image)
+    #final_data = new_height, new_width, ascii_image
+    #a = np.asarray(final_data)
+    #im = Image.fromarray(a)
+    #im.save("Ascii_png.png")
 main()
 im.close()
 os.remove("Temp.png") 

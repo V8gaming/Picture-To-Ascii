@@ -1,2 +1,3 @@
 Pillow ~= 8.0.1
 String-color ~= 1.2.1
+numpy == 1.19.3

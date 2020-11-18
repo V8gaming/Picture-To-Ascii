@@ -36,7 +36,7 @@ suffix = pathlib.Path(path).suffix
 
 if scale == "":
     scale = 1
-if int(scale) < 0:
+if float(scale) < float(0):
     scale = 1
 
 im = Image.open(path)

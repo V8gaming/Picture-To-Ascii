@@ -6,7 +6,7 @@ It works by using [Pillow](https://pillow.readthedocs.io) to convert your pictur
 
 ## Ideas to work on:
     1. Make it an executible.
-    2. Allow GIF files to work.
+    2. Allow GIF files to work. (Done)
     3. More ascii characters.
     4. Output to png, with color choice.
 ## Stages:

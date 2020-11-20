@@ -7,7 +7,10 @@ import pathlib
 import numpy as np
 import shutil
 
+#The characters used for the conversion, it can be added to.
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
+
+#Interactive inputs
 def ainput():
     path = input("Input valid path name to image:\n")
     try:
@@ -17,9 +20,9 @@ def ainput():
         exit()
     return(path)
 path = ainput()
-
 scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
 
+#Trys to make the folders if there is none.
 try:
     os.mkdir("TempFrames")
 except FileExistsError:
@@ -33,19 +36,21 @@ try:
 except FileExistsError:
     pass
 
+#Gets the file extention of the file inputted.
 suffix = str(pathlib.Path(path).suffix)
 
+#Deletes everything in the 'GifOutput' folder.
 folder = str(os.getcwd() + "/GifOutput")
 for filename in os.listdir(folder):
     file_path = os.path.join(folder, filename)
     try:
-        if os.path.isfile(file_path) or os.path.islink(file_path):
+        if os.path.isfile(file_path):
             os.unlink(file_path)
-        elif os.path.isdir(file_path):
-            shutil.rmtree(file_path)
     except Exception as e:
         print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+#Gets all the frames of the gif and splits it up into individual pictures.
+#Prints the amount of frames in the file.
 if suffix == ".gif":
     im = Image.open(path)
     a = 0
@@ -61,18 +66,21 @@ if suffix == ".gif":
 else:
     pass
 
+#When nothing is specified it defaults to 1, same as when its less than 0.
 if scale == "":
     scale = 1
 if float(scale) < float(0):
     scale = 1
 
 if suffix != ".gif":
+    #Stretches & scales the file as long as it's not a gif.
     im = Image.open(path)
     width = im.size[0]
     height = im.size[1] 
     im = im.resize((int(float(width /100 * 165) * float(scale)), int(float(height) * float(scale))), 2)
     im = im.save("Temp.png")
 else:
+    #Stretches & scales each frame of a gif.
     files = os.listdir("." + "/Frames")
     localpath = str(os.getcwd() + "/Frames/")
     for file in files:
@@ -82,16 +90,20 @@ else:
         im = im.resize((int(float(width /100 * 165) * float(scale)), int(float(height) * float(scale))), 2)
         im = im.save("TempFrames/Temp" + file)
 
+#A function to convert the picture to grayscale.
 def greyscale(image):
     greyscale_image = image.convert("L")
     return(greyscale_image)
 
+#A function to convert the picture to ascii text.
 def pixels_to_ascii(image):
     pixels = image.getdata()
+    #Honestly I took this from the tutorial.
     characters = "".join([ASCII_CHARS[pixel//25] for pixel in pixels])
     return(characters)
  
 if suffix != ".gif":
+    #Converts a the 'Temp' to a text document.
     image = PIL.Image.open("Temp.png")
     innerwidth = int(image.size[0])
     new_image_data = pixels_to_ascii(greyscale(image))
@@ -100,8 +112,8 @@ if suffix != ".gif":
     print(ascii_image)
     with open("ascii_image.txt", "w") as f:
         f.write(ascii_image)
-
 else:
+    #Converts the files in 'TempFrames' to a text document, one for each frame.
     files = os.listdir("." + "/TempFrames")
     localpath = str(os.getcwd() + "/TempFrames/")
     b = 0
@@ -114,6 +126,7 @@ else:
         pixel_count = len(new_image_data)
         ascii_image = "\n".join(new_image_data[i:(i+innerwidth)] for i in range(0, pixel_count, innerwidth))
         try:
+            #Prints when each frame is rendered/done.
             print("Frame " + str(filenum[b]) + " done.")
             with open("GifOutput/ascii_image"+ str(filenum[b]) +".txt", "w") as f:
                 f.write(ascii_image)
@@ -123,6 +136,7 @@ else:
         image.close()
         im.close()
 
+#Deletes all files 'TempFrames'
 foldera = str(os.getcwd() + "/TempFrames")
 for filename in os.listdir(foldera):
     file_path = os.path.join(foldera, filename)
@@ -132,6 +146,7 @@ for filename in os.listdir(foldera):
     except Exception as e:
         print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+#Deletes all files 'Frames'
 folderb = str(os.getcwd() + "/Frames")
 for filename in os.listdir(folderb):
     file_path = os.path.join(folderb, filename)
@@ -142,7 +157,7 @@ for filename in os.listdir(folderb):
         print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
-
+#A broken test to turn it to a picture.
 #final_data = new_height, new_width, ascii_image
 #a = np.asarray(final_data)
 #im = Image.fromarray(a)

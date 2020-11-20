@@ -20,6 +20,19 @@ path = ainput()
 
 scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
 
+try:
+    os.mkdir("TempFrames")
+except FileExistsError:
+    pass
+try:
+    os.mkdir("Frames")
+except FileExistsError:
+    pass
+try:
+    os.mkdir("GifOutput")
+except FileExistsError:
+    pass
+
 suffix = str(pathlib.Path(path).suffix)
 
 folder = str(os.getcwd() + "/GifOutput")
@@ -127,7 +140,6 @@ for filename in os.listdir(folderb):
             os.unlink(file_path)
     except Exception as e:
         print('Failed to delete %s. Reason: %s' % (file_path, e))
-
 
 
 

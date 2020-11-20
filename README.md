@@ -5,9 +5,10 @@ It works by using [Pillow](https://pillow.readthedocs.io) to convert your pictur
 
 ## Ideas to work on:
     1. Add parameters to terminal.
-    2. Make it an executible.
-    3. More ascii characters.
-    4. Output to png, with color choice.
+    2. Make it use memory instead of temporary files.
+    3. Make it an executible.
+    4. More ascii characters.
+    5. Output to png, with color choice.
     
 ## Other Additions:
     1. Allow GIF files to work. (Done)

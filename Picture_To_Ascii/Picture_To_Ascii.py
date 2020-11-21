@@ -3,25 +3,55 @@ from stringcolor import *
 import numpy as np
 import shutil
 from pathlib import Path
+import sys
+import getopt
 
+if any(sys.argv[1:]) == True:
+    def arguments():
+        program_name = sys.argv[0]
+        path = str(sys.argv[1])
+        arguments = sys.argv[2:]
+        print("Use boolians for interactive")
+        try:
+            options, args = getopt.getopt(arguments, "i:h:s:f:", ["interactive =","help =","scale =","frame ="])
+        except:
+            print("Error Message ")
+        for name, value in options:
+            if name in ['-i', '--interactive']:
+                interactive = value
+            elif name in ['-h', '--help']:
+                help = value
+            elif name in ['-s', '--scale']:
+                scale = value
+            elif name in ['-f', '--frame']:
+                frame = value
+            else:
+                interactive = False
+                pass
 #The characters used for the conversion, it can be added to.
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
 
 #Interactive inputs
-def ainput() -> Path:
-    path = input("Input valid path name to image:\n")
-    path = Path(path) # more flexibility for windows users who wish to use linux "/" slash for their path
-    try:
-        image = Image.open(path) 
-    except:
-        print(f'{path} is not a valid path to picture.')
-        exit()
-    return path
+if any(sys.argv[1:]) == False:
+    def ainput() -> Path:
+        path = input("Input valid path name to image:\n")
+        path = Path(path) # more flexibility for windows users who wish to use linux "/" slash for their path
+        try:
+            image = Image.open(path) 
+        except:
+            print(f'{path} is not a valid path to picture.')
+            exit()
+        return path
+
+if any(sys.argv[1:]) == True:
+    def ainput() -> Path:
+        path = str(sys.argv[1])
+        return path
 
 # Initial/entry function to set up the motion
 def entry_function() -> tuple[Path, str, float, Path, Path, Path]:
     path = ainput()
-    suffix = path.suffix
+    suffix = str(Path(path).suffix)
     #When nothing is specified it defaults to 1, same as when its less than 0.
     scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
     scale = 1 if not scale else float(scale)
@@ -107,7 +137,7 @@ def main():
         gif_function()
     else:
         non_gif_function()
-    #Deletes all files 'TempFrames'
+    #Deletes tempframes and frames folder & files'
     shutil.rmtree(temp_frames)
     shutil.rmtree(frames_path)
 

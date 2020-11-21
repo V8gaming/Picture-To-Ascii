@@ -1,57 +1,59 @@
-import PIL.Image
 from PIL import Image
-import math
-import os
 from stringcolor import *
-import pathlib
 import numpy as np
 import shutil
+from pathlib import Path
 
 #The characters used for the conversion, it can be added to.
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
 
 #Interactive inputs
-def ainput():
+def ainput() -> Path:
     path = input("Input valid path name to image:\n")
+    path = Path(path) # more flexibility for windows users who wish to use linux "/" slash for their path
     try:
-        image = PIL.Image.open(path) 
+        image = Image.open(path) 
     except:
-        print(path, "Is not a valid path to picture.")
+        print(f'{path} is not a valid path to picture.')
         exit()
-    return(path)
-path = ainput()
-scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
+    return path
 
-#Trys to make the folders if there is none.
-try:
-    os.mkdir("TempFrames")
-except FileExistsError:
-    pass
-try:
-    os.mkdir("Frames")
-except FileExistsError:
-    pass
-try:
-    os.mkdir("GifOutput")
-except FileExistsError:
-    pass
+# Initial/entry function to set up the motion
+def entry_function() -> tuple[Path, str, float, Path, Path, Path]:
+    path = ainput()
+    suffix = path.suffix
+    #When nothing is specified it defaults to 1, same as when its less than 0.
+    scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
+    scale = 1 if not scale else float(scale)
+    scale = 1 if scale < 0 else scale
+    #Trys to make the folders if there are none.
+    temp_frames = Path("TempFrames")
+    temp_frames.mkdir(exist_ok=True)
+    frames_path = Path("Frames")
+    frames_path.mkdir(exist_ok=True)
+    gif_output = Path("GifOutput")
+    if gif_output.exists():
+        shutil.rmtree(gif_output)
+    gif_output.mkdir()
+    return (path, suffix, scale, 
+        temp_frames, frames_path, gif_output,
+    )  
 
-#Gets the file extention of the file inputted.
-suffix = str(pathlib.Path(path).suffix)
+(path, suffix, scale, 
+temp_frames, frames_path, gif_output,) = entry_function()
+#A function to convert the picture to grayscale.
+def greyscale(image: Image.Image) -> Image.Image:
+    greyscale_image = image.convert("L")
+    return greyscale_image
 
-#Deletes everything in the 'GifOutput' folder.
-folder = str(os.getcwd() + "/GifOutput")
-for filename in os.listdir(folder):
-    file_path = os.path.join(folder, filename)
-    try:
-        if os.path.isfile(file_path):
-            os.unlink(file_path)
-    except Exception as e:
-        print('Failed to delete %s. Reason: %s' % (file_path, e))
+#A function to convert the picture to ascii text.
+def pixels_to_ascii(image: Image.Image) -> str:
+    pixels = image.getdata()
+    #Honestly I took this from the tutorial.
+    characters = "".join(ASCII_CHARS[pixel//25] for pixel in pixels)
+    return characters
 
-#Gets all the frames of the gif and splits it up into individual pictures.
-#Prints the amount of frames in the file.
-if suffix == ".gif":
+def gif_function():
     im = Image.open(path)
     a = 0
     try:
@@ -63,48 +65,35 @@ if suffix == ".gif":
             a = a + 1
     except EOFError:
         pass
-else:
-    pass
+    for file in frames_path.iterdir():
+        im = Image.open(file)
+        width = im.size[0]
+        height = im.size[1] 
+        im = im.resize((int(float(width /100 * 165) * float(scale)), int(float(height) * float(scale))), 2)
+        new_file = temp_frames / Path("Temp" + file.name)
+        im = im.save(new_file)
+    #Converts the files in 'TempFrames' to a text document, one for each frame.
+    for i, file in enumerate(temp_frames.iterdir()):
+        with Image.open(file) as im:
+            innerwidth = int(im.size[0])
+        with Image.open(file) as image:
+            new_image_data = pixels_to_ascii(greyscale(image))
+        pixel_count = len(new_image_data)
+        ascii_image = "\n".join(new_image_data[i:(i+innerwidth)] for i in range(0, pixel_count, innerwidth))
+        #Prints when each frame is rendered/done.
+        print("Frame " + str(i) + " done.")
+        with (gif_output / f"ascii_image{i}.txt").open("w") as f:
+            f.write(ascii_image)
+        image.close()
 
-#When nothing is specified it defaults to 1, same as when its less than 0.
-if scale == "":
-    scale = 1
-if float(scale) < float(0):
-    scale = 1
-
-if suffix != ".gif":
+def non_gif_function():
     #Stretches & scales the file as long as it's not a gif.
     im = Image.open(path)
     width = im.size[0]
     height = im.size[1] 
     im = im.resize((int(float(width /100 * 165) * float(scale)), int(float(height) * float(scale))), 2)
-    im = im.save("Temp.png")
-else:
-    #Stretches & scales each frame of a gif.
-    files = os.listdir("." + "/Frames")
-    localpath = str(os.getcwd() + "/Frames/")
-    for file in files:
-        im = Image.open(localpath + file)
-        width = im.size[0]
-        height = im.size[1] 
-        im = im.resize((int(float(width /100 * 165) * float(scale)), int(float(height) * float(scale))), 2)
-        im = im.save("TempFrames/Temp" + file)
-
-#A function to convert the picture to grayscale.
-def greyscale(image):
-    greyscale_image = image.convert("L")
-    return(greyscale_image)
-
-#A function to convert the picture to ascii text.
-def pixels_to_ascii(image):
-    pixels = image.getdata()
-    #Honestly I took this from the tutorial.
-    characters = "".join([ASCII_CHARS[pixel//25] for pixel in pixels])
-    return(characters)
- 
-if suffix != ".gif":
-    #Converts a the 'Temp' to a text document.
-    image = PIL.Image.open("Temp.png")
+    im.save("Temp.png")
+    image = Image.open("Temp.png")
     innerwidth = int(image.size[0])
     new_image_data = pixels_to_ascii(greyscale(image))
     pixel_count = len(new_image_data)
@@ -112,53 +101,16 @@ if suffix != ".gif":
     print(ascii_image)
     with open("ascii_image.txt", "w") as f:
         f.write(ascii_image)
-else:
-    #Converts the files in 'TempFrames' to a text document, one for each frame.
-    files = os.listdir("." + "/TempFrames")
-    localpath = str(os.getcwd() + "/TempFrames/")
-    b = 0
-    filenum = np.arange(len(files))
-    for file in files:
-        im = PIL.Image.open(localpath + file)
-        innerwidth = int(im.size[0])
-        image = PIL.Image.open(localpath + file)
-        new_image_data = pixels_to_ascii(greyscale(image))
-        pixel_count = len(new_image_data)
-        ascii_image = "\n".join(new_image_data[i:(i+innerwidth)] for i in range(0, pixel_count, innerwidth))
-        try:
-            #Prints when each frame is rendered/done.
-            print("Frame " + str(filenum[b]) + " done.")
-            with open("GifOutput/ascii_image"+ str(filenum[b]) +".txt", "w") as f:
-                f.write(ascii_image)
-        except IndexError:
-            pass
-        b = b + 1
-        image.close()
-        im.close()
 
-#Deletes all files 'TempFrames'
-foldera = str(os.getcwd() + "/TempFrames")
-for filename in os.listdir(foldera):
-    file_path = os.path.join(foldera, filename)
-    try:
-        if os.path.isfile(file_path):
-            os.unlink(file_path)
-    except Exception as e:
-        print('Failed to delete %s. Reason: %s' % (file_path, e))
+def main():
+    if suffix == '.gif':
+        gif_function()
+    else:
+        non_gif_function()
+    #Deletes all files 'TempFrames'
+    shutil.rmtree(temp_frames)
+    shutil.rmtree(frames_path)
 
-#Deletes all files 'Frames'
-folderb = str(os.getcwd() + "/Frames")
-for filename in os.listdir(folderb):
-    file_path = os.path.join(folderb, filename)
-    try:
-        if os.path.isfile(file_path):
-            os.unlink(file_path)
-    except Exception as e:
-        print('Failed to delete %s. Reason: %s' % (file_path, e))
+if __name__ == '__main__':
+    main()
 
-
-#A broken test to turn it to a picture.
-#final_data = new_height, new_width, ascii_image
-#a = np.asarray(final_data)
-#im = Image.fromarray(a)
-#im.save("Ascii_png.png")

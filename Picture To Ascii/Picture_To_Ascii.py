@@ -18,23 +18,29 @@ def ainput() -> Path:
         exit()
     return path
 
-#Gets the path and the inputted file extention.
-path = ainput()
-suffix = path.suffix
-#When nothing is specified it defaults to 1, same as when its less than 0.
-scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
-scale = 1 if not scale else float(scale)
-scale = 1 if scale < 0 else scale
-#Trys to make the folders if there are none.
-temp_frames = Path("TempFrames")
-temp_frames.mkdir(exist_ok=True)
-frames_path = Path("Frames")
-frames_path.mkdir(exist_ok=True)
-gif_output = Path("GifOutput")
-if gif_output.exists():
-    shutil.rmtree(gif_output)
-gif_output.mkdir()
+# Initial/entry function to set up the motion
+def entry_function() -> tuple[Path, str, float, Path, Path, Path]:
+    path = ainput()
+    suffix = path.suffix
+    #When nothing is specified it defaults to 1, same as when its less than 0.
+    scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
+    scale = 1 if not scale else float(scale)
+    scale = 1 if scale < 0 else scale
+    #Trys to make the folders if there are none.
+    temp_frames = Path("TempFrames")
+    temp_frames.mkdir(exist_ok=True)
+    frames_path = Path("Frames")
+    frames_path.mkdir(exist_ok=True)
+    gif_output = Path("GifOutput")
+    if gif_output.exists():
+        shutil.rmtree(gif_output)
+    gif_output.mkdir()
+    return (path, suffix, scale, 
+        temp_frames, frames_path, gif_output,
+    )  
 
+(path, suffix, scale, 
+temp_frames, frames_path, gif_output,) = entry_function()
 #A function to convert the picture to grayscale.
 def greyscale(image: Image.Image) -> Image.Image:
     greyscale_image = image.convert("L")
@@ -107,3 +113,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

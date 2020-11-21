@@ -9,25 +9,33 @@ import getopt
 if any(sys.argv[1:]) == True:
     def arguments():
         program_name = sys.argv[0]
-        path = str(sys.argv[1])
         arguments = sys.argv[2:]
-        print("Use boolians for interactive")
+        print("Use booleans for interactive")
         try:
-            options, args = getopt.getopt(arguments, "i:h:s:f:", ["interactive =","help =","scale =","frame ="])
+            options, args = getopt.getopt(arguments, "h:s:f:", ["help =","scale =","frame ="])
         except:
-            print("Error Message ")
-        for name, value in options:
-            if name in ['-i', '--interactive']:
-                interactive = value
+            print("Invalid Arguement")
+        for name in options:
+            if name == "-h" or "--help":
+                print("For terminal input put(python Picture_To_Ascii (Path) (Arguments)")
+                print("Arguements are: -h or --help, -f or --frame, -s or --scale")
+                print("(-h)-h or --help prints this text")
+                print("(-s)Scales the picture based on a float given eg(1.5 or 0.75 etc) if left empty defaults to 1 or if it is set below 0 defaults to 1")
+                print("(-f)Only works if the file is a gif, you can choose which frame to output from (1 to last frame)")
             elif name in ['-h', '--help']:
                 help = value
             elif name in ['-s', '--scale']:
                 scale = value
             elif name in ['-f', '--frame']:
                 frame = value
-            else:
-                interactive = False
-                pass
+            return help, scale, frame
+        return help, scale, frame
+    def ainput() -> Path:
+        path = str(sys.argv[1])
+        return path
+
+
+
 #The characters used for the conversion, it can be added to.
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
 
@@ -41,11 +49,6 @@ if any(sys.argv[1:]) == False:
         except:
             print(f'{path} is not a valid path to picture.')
             exit()
-        return path
-
-if any(sys.argv[1:]) == True:
-    def ainput() -> Path:
-        path = str(sys.argv[1])
         return path
 
 # Initial/entry function to set up the motion

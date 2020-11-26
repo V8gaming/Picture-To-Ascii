@@ -6,33 +6,32 @@ from pathlib import Path
 import sys
 import getopt
 
+scale = "null"
 if any(sys.argv[1:]) == True:
-    def arguments():
-        program_name = sys.argv[0]
+    arguments = sys.argv[2:]
+    program_name = sys.argv[0]
+    try:
+      opts, args = getopt.getopt(arguments,"hs:f:",["scale=","frame="])
+    except getopt.GetoptError:
+        pass
+    for opt, arg in opts:
+        if opt == '-h':
+            print("For terminal input put(python Picture_To_Ascii (Path) (Arguments)")
+            print("Arguements are: -h or --help, -f or --frame, -s or --scale")
+            print("(-h)-h or --help prints this text")
+            print("(-s)Scales the picture based on a float given eg(1.5 or 0.75 etc) if left empty defaults to 1 or if it is set below 0 defaults to 1")
+            print("(-f)Only works if the file is a gif, you can choose which frame to output from (1 to last frame)")
+            exit()
+        elif opt == '-s' or '--scale':
+            scale = arg
+        elif opt == '-f' or '--frame':
+            frame = arg
+    def ainput() -> Path:
         path = str(sys.argv[1])
-        arguments = sys.argv[2:]
-        print("Use boolians for interactive")
-        try:
-            options, args = getopt.getopt(arguments, "i:h:s:f:", ["interactive =","help =","scale =","frame ="])
-        except:
-            print("Error Message ")
-        for name, value in options:
-            if name in ['-i', '--interactive']:
-                interactive = value
-            elif name in ['-h', '--help']:
-                help = value
-            elif name in ['-s', '--scale']:
-                scale = value
-            elif name in ['-f', '--frame']:
-                frame = value
-            else:
-                interactive = False
-                pass
-#The characters used for the conversion, it can be added to.
-ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
+        return path
 
 #Interactive inputs
-if any(sys.argv[1:]) == False:
+elif any(sys.argv[1:]) == False:
     def ainput() -> Path:
         path = input("Input valid path name to image:\n")
         path = Path(path) # more flexibility for windows users who wish to use linux "/" slash for their path
@@ -43,34 +42,54 @@ if any(sys.argv[1:]) == False:
             exit()
         return path
 
-if any(sys.argv[1:]) == True:
-    def ainput() -> Path:
-        path = str(sys.argv[1])
-        return path
+
+#The characters used for the conversion, it can be added to.
+ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
+
 
 # Initial/entry function to set up the motion
-def entry_function() -> tuple[Path, str, float, Path, Path, Path]:
-    path = ainput()
-    suffix = str(Path(path).suffix)
-    #When nothing is specified it defaults to 1, same as when its less than 0.
-    scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
-    scale = 1 if not scale else float(scale)
-    scale = 1 if scale < 0 else scale
-    #Trys to make the folders if there are none.
-    temp_frames = Path("TempFrames")
-    temp_frames.mkdir(exist_ok=True)
-    frames_path = Path("Frames")
-    frames_path.mkdir(exist_ok=True)
-    gif_output = Path("GifOutput")
-    if gif_output.exists():
-        shutil.rmtree(gif_output)
-    gif_output.mkdir()
-    return (path, suffix, scale, 
-        temp_frames, frames_path, gif_output,
-    )  
+if scale == "null":
+    def entry_function() -> tuple[Path, str, float, Path, Path, Path]:
+        path = ainput()
+        suffix = str(Path(path).suffix)
+        #When nothing is specified it defaults to 1, same as when its less than 0.
+        scale = input("Scale 1 is normal(in decimal e.g. 0.5, 1.5 etc), leave empty for normal:\n")
+        scale = 1 if not scale else float(scale)
+        scale = 1 if scale < 0 else scale
+        #Trys to make the folders if there are none.
+        temp_frames = Path("TempFrames")
+        temp_frames.mkdir(exist_ok=True)
+        frames_path = Path("Frames")
+        frames_path.mkdir(exist_ok=True)
+        gif_output = Path("GifOutput")
+        if gif_output.exists():
+            shutil.rmtree(gif_output)
+        gif_output.mkdir()
+        return (path, suffix, scale, 
+            temp_frames, frames_path, gif_output,
+        )  
 
-(path, suffix, scale, 
-temp_frames, frames_path, gif_output,) = entry_function()
+    (path, suffix, scale, 
+    temp_frames, frames_path, gif_output,) = entry_function()
+else:
+    def entry_function() -> tuple[Path, str, float, Path, Path, Path]:
+        path = ainput()
+        suffix = str(Path(path).suffix)
+        #Trys to make the folders if there are none.
+        temp_frames = Path("TempFrames")
+        temp_frames.mkdir(exist_ok=True)
+        frames_path = Path("Frames")
+        frames_path.mkdir(exist_ok=True)
+        gif_output = Path("GifOutput")
+        if gif_output.exists():
+            shutil.rmtree(gif_output)
+        gif_output.mkdir()
+        return (path, suffix, scale, 
+            temp_frames, frames_path, gif_output,
+        )  
+
+    (path, suffix, scale, 
+    temp_frames, frames_path, gif_output,) = entry_function()
 #A function to convert the picture to grayscale.
 def greyscale(image: Image.Image) -> Image.Image:
     greyscale_image = image.convert("L")

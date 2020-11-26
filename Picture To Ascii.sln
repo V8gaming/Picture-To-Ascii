@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Picture To Ascii", "Picture To Ascii\Picture To Ascii.pyproj", "{936DEFD5-271C-4A31-8716-A70C1C94A173}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Picture To Ascii", "Picture_To_Ascii\Picture To Ascii.pyproj", "{936DEFD5-271C-4A31-8716-A70C1C94A173}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,6 +18,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {21C475CC-BF26-4B71-A451-1B6404AE909E}
+		SolutionGuid = {DF5E1A6A-FAD2-43CA-94BD-AC9920397DAF}
 	EndGlobalSection
 EndGlobal

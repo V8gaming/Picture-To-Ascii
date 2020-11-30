@@ -18,7 +18,8 @@ It works by using [Pillow](https://pillow.readthedocs.io) to convert your pictur
     
 ## Other Additions:
     1. Allow GIF files to work. (Done)
-    2. Add docstrings. (Partially Done)
+    2. Add docstrings. (continuous)
+    3. Added video support(.mp4, .mov, .avi & .mkv) (Done)
 ## Stages:
 ### Stage 1 (Done)
 Convert picture to ascii text in full resulution, has scale option.

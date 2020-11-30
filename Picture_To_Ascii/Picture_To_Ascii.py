@@ -5,8 +5,10 @@ import shutil
 from pathlib import Path
 import sys
 import getopt
+import cv2
 
 scale = "null"
+framenum = "null"
 if any(sys.argv[1:]) == True:
     arguments = sys.argv[2:]
     program_name = sys.argv[0]
@@ -25,7 +27,8 @@ if any(sys.argv[1:]) == True:
         elif opt == '-s' or '--scale':
             scale = arg
         elif opt == '-f' or '--frame':
-            frame = arg
+            framenum = arg
+            print(framenum)
     def ainput() -> Path:
         path = str(sys.argv[1])
         return path
@@ -33,19 +36,28 @@ if any(sys.argv[1:]) == True:
 #Interactive inputs
 elif any(sys.argv[1:]) == False:
     def ainput() -> Path:
-        path = input("Input valid path name to image:\n")
+        path = input("Input valid path name to supported media:\n")
         path = Path(path) # more flexibility for windows users who wish to use linux "/" slash for their path
+        suffix = str(Path(path).suffix)
         try:
-            image = Image.open(path) 
+            if suffix != ".mp4":
+                image = Image.open(path)
+            if suffix != ".mov":
+                image = Image.open(path)
+            if suffix != ".avi":
+                image = Image.open(path)
+            if suffix != ".mkv":
+                image = Image.open(path)
+            else:
+                pass
         except:
-            print(f'{path} is not a valid path to picture.')
+            print(f'{path} is not a valid path to supported media.')
             exit()
         return path
 
 
 #The characters used for the conversion, it can be added to.
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
-
 
 # Initial/entry function to set up the motion
 if scale == "null":
@@ -64,7 +76,7 @@ if scale == "null":
         gif_output = Path("GifOutput")
         if gif_output.exists():
             shutil.rmtree(gif_output)
-        gif_output.mkdir()
+        gif_output.mkdir()       
         return (path, suffix, scale, 
             temp_frames, frames_path, gif_output,
         )  
@@ -135,11 +147,47 @@ def gif_function():
             f.write(ascii_image)
         image.close()
 
+def video_function():
+    video = cv2.VideoCapture(path)
+    c = 0
+    try:
+        vidframes = np.arange(int(video.get(cv2.CAP_PROP_FRAME_COUNT)))
+        print("Amount of frames:" + str(int(video.get(cv2.CAP_PROP_FRAME_COUNT))))
+        success, image = video.read()
+        print("Loading")
+        while success:
+            cv2.imwrite("Frames/frame%d.png" % c, image)
+            success, image = video.read()
+            c += 1
+    except IndexError:
+        pass
+    print("Done Loading, now stretching.")
+    for file in frames_path.iterdir():
+        im = Image.open(file)
+        width = im.size[0]
+        height = im.size[1] 
+        im = im.resize((int(float(width /100 * 165) * float(scale)), int(float(height) * float(scale))), 2)
+        new_file = temp_frames / Path("Temp" + file.name)
+        im = im.save(new_file)
+    #Converts the files in 'TempFrames' to a text document, one for each frame.
+    for i, file in enumerate(temp_frames.iterdir()):
+        with Image.open(file) as im:
+            innerwidth = int(im.size[0])
+        with Image.open(file) as image:
+            new_image_data = pixels_to_ascii(greyscale(image))
+        pixel_count = len(new_image_data)
+        ascii_image = "\n".join(new_image_data[i:(i+innerwidth)] for i in range(0, pixel_count, innerwidth))
+        #Prints when each frame is rendered/done.
+        print("Frame " + str(i) + " done.")
+        with (gif_output / f"ascii_image{i}.txt").open("w") as f:
+            f.write(ascii_image)
+        image.close()
+
 def non_gif_function():
     #Stretches & scales the file as long as it's not a gif.
     im = Image.open(path)
     width = im.size[0]
-    height = im.size[1] 
+    height = im.size[1]
     im = im.resize((int(float(width /100 * 165) * float(scale)), int(float(height) * float(scale))), 2)
     im.save("Temp.png")
     image = Image.open("Temp.png")
@@ -154,12 +202,18 @@ def non_gif_function():
 def main():
     if suffix == '.gif':
         gif_function()
+    elif suffix == ".mp4":
+        video_function()
+    elif suffix == ".mov":
+        video_function()
+    elif suffix == ".avi":
+        video_function()
+    elif suffix == ".mkv":
+        video_function()
     else:
         non_gif_function()
     #Deletes tempframes and frames folder & files'
     shutil.rmtree(temp_frames)
     shutil.rmtree(frames_path)
-
 if __name__ == '__main__':
     main()
-

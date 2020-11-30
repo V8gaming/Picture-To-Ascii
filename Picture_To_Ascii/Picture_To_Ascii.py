@@ -198,6 +198,11 @@ def non_gif_function():
     print(ascii_image)
     with open("ascii_image.txt", "w") as f:
         f.write(ascii_image)
+    image = Image.new(mode = "L", size = (width,height), color = "white")
+    fnt = ImageFont.truetype('arial.ttf', 15)
+    draw = ImageDraw.Draw(image)
+    draw.multiline_text((10,10), ascii_image, font=fnt, spacing = 1, align = "center")
+    image.save("Image_output.png")
 
 def main():
     if suffix == '.gif':

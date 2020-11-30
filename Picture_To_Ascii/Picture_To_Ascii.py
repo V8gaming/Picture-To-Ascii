@@ -40,7 +40,13 @@ elif any(sys.argv[1:]) == False:
         path = Path(path) # more flexibility for windows users who wish to use linux "/" slash for their path
         suffix = str(Path(path).suffix)
         try:
-            if suffix != ".mp4" or ".mov" or ".avi" or ".mkv":
+            if suffix != ".mp4":
+                image = Image.open(path)
+            if suffix != ".mov":
+                image = Image.open(path)
+            if suffix != ".avi":
+                image = Image.open(path)
+            if suffix != ".mkv":
                 image = Image.open(path)
             else:
                 pass
@@ -196,7 +202,13 @@ def non_gif_function():
 def main():
     if suffix == '.gif':
         gif_function()
-    elif suffix == ".mp4" or ".mov" or ".avi" or ".mkv":
+    elif suffix == ".mp4":
+        video_function()
+    elif suffix == ".mov":
+        video_function()
+    elif suffix == ".avi":
+        video_function()
+    elif suffix == ".mkv":
         video_function()
     else:
         non_gif_function()

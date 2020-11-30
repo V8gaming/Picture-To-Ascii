@@ -1,5 +1,7 @@
 # Picture-To-Ascii
 ***Requires python 3.9***
+
+***Video formats that work are: .mp4, .mov, .avi & .mkv***
 ## How to run:
     python Picture-To-Ascii.py (path) (arguments)
     -h for help

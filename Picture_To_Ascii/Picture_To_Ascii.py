@@ -40,8 +40,8 @@ elif any(sys.argv[1:]) == False:
         path = Path(path) # more flexibility for windows users who wish to use linux "/" slash for their path
         suffix = str(Path(path).suffix)
         try:
-            if suffix != ".mp4":
-                image = Image.open(path)         
+            if suffix != ".mp4" or ".mov" or ".avi" or ".mkv":
+                image = Image.open(path)
             else:
                 pass
         except:
@@ -52,7 +52,6 @@ elif any(sys.argv[1:]) == False:
 
 #The characters used for the conversion, it can be added to.
 ASCII_CHARS = ["@", "#", "$", "%", "?", "*", "+", ";", ":", ",", ".", " "]
-
 
 # Initial/entry function to set up the motion
 if scale == "null":
@@ -71,7 +70,7 @@ if scale == "null":
         gif_output = Path("GifOutput")
         if gif_output.exists():
             shutil.rmtree(gif_output)
-        gif_output.mkdir()
+        gif_output.mkdir()       
         return (path, suffix, scale, 
             temp_frames, frames_path, gif_output,
         )  
@@ -144,11 +143,19 @@ def gif_function():
 
 def video_function():
     video = cv2.VideoCapture(path)
-    success, image = video.read()
     c = 0
-    while success:
-        cv2.imwrite("Frames/frame%d.png" % a, image)
-        c = c + 1
+    try:
+        vidframes = np.arange(int(video.get(cv2.CAP_PROP_FRAME_COUNT)))
+        print("Amount of frames:" + str(int(video.get(cv2.CAP_PROP_FRAME_COUNT))))
+        success, image = video.read()
+        print("Loading")
+        while success:
+            cv2.imwrite("Frames/frame%d.png" % c, image)
+            success, image = video.read()
+            c += 1
+    except IndexError:
+        pass
+    print("Done Loading, now stretching.")
     for file in frames_path.iterdir():
         im = Image.open(file)
         width = im.size[0]
@@ -189,13 +196,12 @@ def non_gif_function():
 def main():
     if suffix == '.gif':
         gif_function()
-    elif suffix == ".mp4":
+    elif suffix == ".mp4" or ".mov" or ".avi" or ".mkv":
         video_function()
     else:
         non_gif_function()
     #Deletes tempframes and frames folder & files'
     shutil.rmtree(temp_frames)
     shutil.rmtree(frames_path)
-
 if __name__ == '__main__':
     main()
